@@ -115,14 +115,7 @@ play_vs_computer() {
             # Ход игрока
             while true; do
                 echo -e "$(get_player_color $current_player)Ход игрока $current_player$RESET"
-                read -p "Выбери клетку (1-9, 'q' - выход): " input
-                
-                case $input in
-                    q|Q)
-                        echo -e "${PURPLE_MEDIUM}Выход из игры...${RESET}"
-                        return
-                        ;;
-                esac
+                read -p "Выбери клетку (1-9): " input
                 
                 if ! [[ $input =~ ^[1-9]$ ]]; then
                     echo -e "${RED}Введи число от 1 до 9!${RESET}"
@@ -188,14 +181,7 @@ play_two_players() {
         # Ход текущего игрока
         while true; do
             echo -e "$(get_player_color $current_player)Ход игрока $current_player$RESET"
-            read -p "Выбери клетку (1-9, 'q' - выход): " input
-            
-            case $input in
-                q|Q)
-                    echo -e "${PURPLE_MEDIUM}Выход из игры...${RESET}"
-                    return
-                    ;;
-            esac
+            read -p "Выбери клетку (1-9): " input
             
             if ! [[ $input =~ ^[1-9]$ ]]; then
                 echo -e "${RED}Введи число от 1 до 9!${RESET}"
@@ -238,20 +224,13 @@ play_two_players() {
 
 # Функция выбора режима игры
 choose_game_mode() {
-    echo -e "${PURPLE_DARK}"
-    echo "   ╔══════════════════════════╗"
-    echo "   ║     🎮 КРЕСТИКИ-НОЛИКИ  ║"
-    echo "   ║        💜 ФИОЛЕТОВЫЕ    ║"
-    echo "   ╚══════════════════════════╝"
-    echo -e "${RESET}"
     echo -e "${PURPLE_MEDIUM}Выбери режим игры:${RESET}"
     echo -e "  ${CYAN}1${RESET} - Игра против компьютера"
     echo -e "  ${PURPLE_NEON}2${RESET} - Два игрока"
-    echo -e "  ${RED}3${RESET} - Выход из игры"
     echo ""
     
     while true; do
-        read -p "Твой выбор (1-3): " choice
+        read -p "Твой выбор (1-2): " choice
         
         case $choice in
             1)
@@ -262,12 +241,8 @@ choose_game_mode() {
                 play_two_players
                 break
                 ;;
-            3)
-                echo -e "${PURPLE_MEDIUM}Выход из игры... 💜${RESET}"
-                exit 0
-                ;;
             *)
-                echo -e "${RED}Неверный выбор! Введи 1, 2 или 3.${RESET}"
+                echo -e "${RED}Неверный выбор! Введи 1 или 2.${RESET}"
                 ;;
         esac
     done

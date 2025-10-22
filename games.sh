@@ -31,7 +31,7 @@ print_banner() {
 
 # Функция для запуска игры в Windows
 run_game_windows() {
-    local game_file="$1"
+    local run_script="$1"
     local game_name="$2"
     
     echo -e "${CYAN}🐀 Запускаем $game_name в новом окне Git Bash...${RESET}"
@@ -39,28 +39,28 @@ run_game_windows() {
     # Запускаем в новом окне Git Bash
     if command -v mintty &> /dev/null; then
         # Используем mintty для нового окна Git Bash
-        mintty -t "$game_name" -h always -e bash -c "cd '$SCRIPT_DIR' && ./'$game_file'; echo 'Нажмите любую клавишу для выхода...'; read -n1" &
+        mintty -t "$game_name" -h always -e bash -c "cd '$SCRIPT_DIR' && ./'$run_script'; echo 'Нажмите любую клавишу для выхода...'; read -n1" &
     else
         # Альтернативный способ для Git Bash
-        start "Bash Game: $game_name" bash -c "cd '$SCRIPT_DIR' && ./'$game_file'; echo 'Нажмите любую клавишу для выхода...'; read -n1"
+        start "Bash Game: $game_name" bash -c "cd '$SCRIPT_DIR' && ./'$run_script'; echo 'Нажмите любую клавишу для выхода...'; read -n1"
     fi
 }
 
 # Главная функция запуска игры
 run_game() {
-    local game_file="$1"
+    local run_script="$1"
     local game_name="$2"
     local emoji="$3"
     
     echo -e "${LIGHT_PURPLE}🎮 Запускаем $emoji $game_name...${RESET}"
     
-    if [[ ! -f "$SCRIPT_DIR/$game_file" ]]; then
-        echo -e "${PURPLE}❌ Файл игры $game_file не найден!${RESET}"
+    if [[ ! -f "$SCRIPT_DIR/$run_script" ]]; then
+        echo -e "${PURPLE}❌ Скрипт запуска $run_script не найден!${RESET}"
         return 1
     fi
     
-    chmod +x "$SCRIPT_DIR/$game_file" 2>/dev/null
-    run_game_windows "$game_file" "$game_name"
+    chmod +x "$SCRIPT_DIR/$run_script" 2>/dev/null
+    run_game_windows "$run_script" "$game_name"
 }
 
 # Анимация загрузки
@@ -97,27 +97,27 @@ while true; do
     case $choice in
         1)
             show_loading
-            run_game "snake.sh" "Змейка" "🐍"
+            run_game "run_snake.sh" "Змейка" "🐍"
             ;;
         2)
             show_loading
-            run_game "hangman.sh" "Виселица" "🎭"
+            run_game "run_hangman.sh" "Виселица" "🎭"
             ;;
         3)
             show_loading
-            run_game "dice.sh" "Кости" "🎲"
+            run_game "run_dice.sh" "Кости" "🎲"
             ;;
         4)
             show_loading
-            run_game "maze.sh" "Лабиринт" "🏰"
+            run_game "run_maze.sh" "Лабиринт" "🏰"
             ;;
         5)
             show_loading
-            run_game "purple_tictactoe.sh" "Крестики-нолики" "❌⭕"
+            run_game "run_tictactoe.sh" "Крестики-нолики" "❌⭕"
             ;;
         6)
             show_loading
-            run_game "pacman.sh" "Пакман" "👻"
+            run_game "run_pacman.sh" "Пакман" "👻"
             ;;
         7)
             echo

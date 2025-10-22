@@ -11,8 +11,12 @@ while true; do
     echo "   ╚══════════════════════════╝"
     echo -e "\033[0m"
     
-    # Запускаем саму игру
-    bash "$SCRIPT_DIR/snake.sh"
+    echo -e "\033[1;36mЗапуск игры...\033[0m"
+    sleep 1
+    
+    # Запускаем саму игру в текущем терминале
+    cd "$SCRIPT_DIR"
+    bash snake.sh
     
     echo ""
     echo "════════════════════════════════"
@@ -30,6 +34,5 @@ while true; do
 done
 
 echo ""
-echo -e "\033[1;36m💜 Окно можно закрыть 💜\033[0m"
-read -p "Нажми Enter чтобы выйти..."
+echo -e "\033[1;36m💜 Нажми Ctrl+C чтобы выйти 💜\033[0m"
 EOF

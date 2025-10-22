@@ -3,29 +3,68 @@
 # Цветовые коды
 PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
+GREEN='\033[0;32m'
+RED='\033[0;31m'
 RESET='\033[0m'
 
 echo -e "${PURPLE}🎮 Настройка коллекции игр...${RESET}"
 
-# Функция для определения ОС
-detect_os() {
+# Функция для определения ОС и проверки Git
+detect_environment() {
     case "$(uname -s)" in
-        Darwin*)    echo "macos" ;;
-        Linux*)     echo "linux" ;;
-        CYGWIN*|MINGW*|MSYS*) echo "windows" ;;
-        *)          echo "unknown" ;;
+        Darwin*)    
+            echo "macos"
+            if command -v git &> /dev/null; then
+                echo "git"
+            else
+                echo "native"
+            fi
+            ;;
+        Linux*)     
+            echo "linux" 
+            if command -v git &> /dev/null; then
+                echo "git"
+            else
+                echo "native"
+            fi
+            ;;
+        CYGWIN*|MINGW*|MSYS*)
+            echo "windows"
+            # Проверяем, запущено ли в Git Bash
+            if command -v git &> /dev/null && [[ "$SHELL" == *"bash"* ]]; then
+                echo "git"
+            else
+                echo "native"
+            fi
+            ;;
+        *)          
+            echo "unknown"
+            echo "native"
+            ;;
     esac
 }
 
-OS_TYPE=$(detect_os)
+# Получаем информацию о среде
+ENV_INFO=($(detect_environment))
+OS_TYPE="${ENV_INFO[0]}"
+TERMINAL_TYPE="${ENV_INFO[1]}"
+
 GAMES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo -e "${CYAN}🔍 Обнаружена система: $OS_TYPE${RESET}"
+echo -e "${CYAN}🔧 Тип терминала: $TERMINAL_TYPE${RESET}"
 echo -e "${CYAN}📁 Директория с играми: $GAMES_DIR${RESET}"
+
+# Проверяем наличие bash
+if ! command -v bash &> /dev/null; then
+    echo -e "${RED}❌ Ошибка: bash не найден!${RESET}"
+    echo -e "${PURPLE}💡 Для Windows установите Git Bash или WSL${RESET}"
+    exit 1
+fi
 
 # Делаем все скрипты исполняемыми
 echo -e "${PURPLE}⚙️  Настраиваю права доступа...${RESET}"
-chmod +x *.sh
+chmod +x *.sh 2>/dev/null || echo -e "${CYAN}⚠️  Невозможно изменить права доступа (возможно Windows CMD)${RESET}"
 
 # Создаем основную структуру games.sh
 echo -e "${PURPLE}📝 Создаю главный менеджер игр...${RESET}"
@@ -66,8 +105,9 @@ EOF
 # Теперь добавляем OS-специфичный код
 case "$OS_TYPE" in
     windows)
-        echo -e "${PURPLE}🪟 Настраиваю для Windows...${RESET}"
-        cat >> "$GAMES_DIR/games.sh" << 'WINDOWS_EOF'
+        if [[ "$TERMINAL_TYPE" == "git" ]]; then
+            echo -e "${GREEN}🪟 Настраиваю для Windows (Git Bash)...${RESET}"
+            cat >> "$GAMES_DIR/games.sh" << 'WINDOWS_GIT_EOF'
 
 # Функция для запуска игры в Windows системном терминале
 run_game_windows() {
@@ -113,7 +153,52 @@ run_game() {
     # Для Windows используем системный терминал
     run_game_windows "$run_script" "$game_name"
 }
-WINDOWS_EOF
+WINDOWS_GIT_EOF
+        else
+            echo -e "${CYAN}🪟 Настраиваю для Windows (нативный терминал)...${RESET}"
+            cat >> "$GAMES_DIR/games.sh" << 'WINDOWS_NATIVE_EOF'
+
+# Функция для запуска игры в Windows нативном терминале
+run_game_windows_native() {
+    local run_script="$1"
+    local game_name="$2"
+    
+    echo -e "${CYAN}🐀 Запускаем $game_name в новом окне...${RESET}"
+    
+    # Для нативного Windows терминала используем start
+    start "Bash Game: $game_name" bash -c "
+        cd '$SCRIPT_DIR' 
+        echo 'Запуск $game_name...'
+        ./'$run_script'
+        echo ''
+        echo 'Игра завершена. Окно закроется автоматически через 3 секунды...'
+        sleep 3
+    "
+}
+
+# Функция для определения ОС и запуска игры
+run_game() {
+    local run_script="$1"
+    local game_name="$2"
+    local emoji="$3"
+    
+    echo -e "${LIGHT_PURPLE}🎮 Запускаем $emoji $game_name...${RESET}"
+    
+    # Проверяем существование скрипта игры
+    if [[ ! -f "$SCRIPT_DIR/$run_script" ]]; then
+        echo -e "${PURPLE}❌ Скрипт запуска $run_script не найден!${RESET}"
+        echo -e "${PURPLE}📁 Убедитесь что файл существует в директории: $SCRIPT_DIR/${RESET}"
+        return 1
+    fi
+    
+    # Для нативного Windows chmod может не работать, но пробуем
+    chmod +x "$SCRIPT_DIR/$run_script" 2>/dev/null
+    
+    # Для Windows нативного терминала
+    run_game_windows_native "$run_script" "$game_name"
+}
+WINDOWS_NATIVE_EOF
+        fi
         ;;
 
     linux)
@@ -336,8 +421,14 @@ main
 COMMON_EOF
 
 # Делаем games.sh исполняемым
-chmod +x "$GAMES_DIR/games.sh"
+chmod +x "$GAMES_DIR/games.sh" 2>/dev/null || echo -e "${CYAN}⚠️  Невозможно сделать games.sh исполняемым${RESET}"
 
-echo -e "${PURPLE}✅ Настройка завершена!${RESET}"
+echo -e "${GREEN}✅ Настройка завершена!${RESET}"
 echo -e "${CYAN}🚀 Запускайте игры командой: ./games.sh${RESET}"
-echo -e "${CYAN}💻 Определенная ОС: $OS_TYPE${RESET}"
+echo -e "${CYAN}💻 Операционная система: $OS_TYPE${RESET}"
+echo -e "${CYAN}🔧 Тип терминала: $TERMINAL_TYPE${RESET}"
+
+if [[ "$OS_TYPE" == "windows" && "$TERMINAL_TYPE" == "native" ]]; then
+    echo -e "${PURPLE}💡 Подсказка: Для лучшего опыта установите Git Bash${RESET}"
+    echo -e "${PURPLE}   Скачать: https://git-scm.com/download/win${RESET}"
+fi

@@ -27,12 +27,12 @@ while true; do
     read -p "Твой выбор (1-7): " choice
     
     case $choice in
-        1) bash "$SCRIPT_DIR/run_snake.sh" ;;
-        2) bash "$SCRIPT_DIR/run_hangman.sh" ;;
-        3) bash "$SCRIPT_DIR/run_dice.sh" ;;
-        4) bash "$SCRIPT_DIR/run_maze.sh" ;;
-        5) bash "$SCRIPT_DIR/run_tictactoe.sh" ;;
-        6) bash "$SCRIPT_DIR/run_pacman.sh" ;;
+        1) gnome-terminal -- bash -c "cd '$SCRIPT_DIR'; bash run_snake.sh; exec bash" || xterm -e "cd '$SCRIPT_DIR'; bash run_snake.sh" || echo "Не удалось открыть новое окно терминала" ;;
+        2) gnome-terminal -- bash -c "cd '$SCRIPT_DIR'; bash run_hangman.sh; exec bash" || xterm -e "cd '$SCRIPT_DIR'; bash run_hangman.sh" || echo "Не удалось открыть новое окно терминала" ;;
+        3) gnome-terminal -- bash -c "cd '$SCRIPT_DIR'; bash run_dice.sh; exec bash" || xterm -e "cd '$SCRIPT_DIR'; bash run_dice.sh" || echo "Не удалось открыть новое окно терминала" ;;
+        4) gnome-terminal -- bash -c "cd '$SCRIPT_DIR'; bash run_maze.sh; exec bash" || xterm -e "cd '$SCRIPT_DIR'; bash run_maze.sh" || echo "Не удалось открыть новое окно терминала" ;;
+        5) gnome-terminal -- bash -c "cd '$SCRIPT_DIR'; bash run_tictactoe.sh; exec bash" || xterm -e "cd '$SCRIPT_DIR'; bash run_tictactoe.sh" || echo "Не удалось открыть новое окно терминала" ;;
+        6) gnome-terminal -- bash -c "cd '$SCRIPT_DIR'; bash run_pacman.sh; exec bash" || xterm -e "cd '$SCRIPT_DIR'; bash run_pacman.sh" || echo "Не удалось открыть новое окно терминала" ;;
         7) 
             echo -e "\033[1;35mДо новых игр! 💜\033[0m"
             exit 0
@@ -43,7 +43,7 @@ while true; do
             ;;
     esac
     
-    echo -e "\033[1;32m🎮 Игра запускается...\033[0m"
+    echo -e "\033[1;32m🎮 Игра запускается в новом окне терминала...\033[0m"
     sleep 1
 done
 EOF

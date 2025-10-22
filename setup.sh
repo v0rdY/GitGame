@@ -25,8 +25,14 @@ SHELL_CONFIG=$(detect_shell_config)
 # Получаем абсолютный путь к папке с играми
 GAMES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Создаем команду games
-GAMES_ALIAS="alias games='cd \"$GAMES_DIR\" && bash games.sh'"
+# Для Windows Git Bash используем start для открытия в новом окне
+if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
+    GAMES_ALIAS="alias games='cd \"$GAMES_DIR\" && bash games.sh'"
+    echo "🔧 Обнаружена Windows система"
+else
+    # Для Linux используем gnome-terminal или xterm
+    GAMES_ALIAS="alias games='cd \"$GAMES_DIR\" && bash games.sh'"
+fi
 
 echo "📍 Путь к играм: $GAMES_DIR"
 
@@ -48,13 +54,7 @@ echo ""
 echo "   games          - Главное меню (новый алиас!)"
 echo "   bash games.sh  - Главное меню"
 echo ""
-echo "🎯 Или отдельные игры:"
-echo "   bash snake.sh    - Змейка"
-echo "   bash pacman.sh   - Пакман" 
-echo "   bash hangman.sh  - Виселица"
-echo "   bash dice.sh     - Кости"
-echo "   bash maze.sh     - Лабиринт"
-echo "   bash purple_tictactoe.sh - Крестики-нолики"
+echo "🎯 Игры будут открываться в новых окнах терминала"
 echo ""
 echo "🔄 Если переместили папку с играми, выполните:"
 echo "   bash update.sh   - Обновит алиас"

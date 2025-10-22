@@ -1,5 +1,6 @@
 #!/bin/bash
-cd /c/giit/game
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 while true; do
     clear
@@ -11,7 +12,7 @@ while true; do
     echo -e "\033[0m"
     
     # Запускаем саму игру
-    c:/giit/game/hangman.sh
+    bash "$SCRIPT_DIR/hangman.sh"
     
     echo ""
     echo "════════════════════════════════"
@@ -31,3 +32,4 @@ done
 echo ""
 echo -e "\033[1;36m💜 Окно можно закрыть 💜\033[0m"
 read -p "Нажми Enter чтобы выйти..."
+EOF

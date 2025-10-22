@@ -1,6 +1,9 @@
 #!/bin/bash
 # games.sh
 
+# Получаем путь к директории где находится скрипт
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 show_menu() {
     echo -e "\033[1;35m"
     echo "   ╔══════════════════════╗"
@@ -24,12 +27,12 @@ while true; do
     read -p "Твой выбор (1-7): " choice
     
     case $choice in
-        1) start bash -c "cd /c/giit/game; ./run_snake.sh" ;;
-        2) start bash -c "cd /c/giit/game; ./run_hangman.sh" ;;
-        3) start bash -c "cd /c/giit/game; ./run_dice.sh" ;;
-        4) start bash -c "cd /c/giit/game; ./run_maze.sh" ;;
-        5) start bash -c "cd /c/giit/game; ./run_tictactoe.sh" ;;
-        6) start bash -c "cd /c/giit/game; ./run_pacman.sh" ;;
+        1) bash "$SCRIPT_DIR/run_snake.sh" ;;
+        2) bash "$SCRIPT_DIR/run_hangman.sh" ;;
+        3) bash "$SCRIPT_DIR/run_dice.sh" ;;
+        4) bash "$SCRIPT_DIR/run_maze.sh" ;;
+        5) bash "$SCRIPT_DIR/run_tictactoe.sh" ;;
+        6) bash "$SCRIPT_DIR/run_pacman.sh" ;;
         7) 
             echo -e "\033[1;35mДо новых игр! 💜\033[0m"
             exit 0
@@ -40,6 +43,7 @@ while true; do
             ;;
     esac
     
-    echo -e "\033[1;32m🎮 Игра запускается в новом окне...\033[0m"
+    echo -e "\033[1;32m🎮 Игра запускается...\033[0m"
     sleep 1
 done
+EOF

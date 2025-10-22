@@ -1,7 +1,18 @@
 #!/bin/bash
-cd /c/giit/game
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+while true; do
+    clear
+    echo -e "\033[1;35m"
+    echo "   ╔══════════════════════════╗"
+    echo "   ║   🎮 КРЕСТИКИ-НОЛИКИ   ║"
+    echo "   ║       💜 ФИОЛЕТОВЫЕ     ║"
+    echo "   ╚══════════════════════════╝"
+    echo -e "\033[0m"
+    
     # Запускаем саму игру
-    c:/giit/game/purple_tictactoe.sh
+    bash "$SCRIPT_DIR/purple_tictactoe.sh"
     
     echo ""
     echo "════════════════════════════════"
@@ -21,3 +32,4 @@ done
 echo ""
 echo -e "\033[1;36m💜 Окно можно закрыть 💜\033[0m"
 read -p "Нажми Enter чтобы выйти..."
+EOF

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 while true; do
     clear
     echo -e "\033[1;35m"
@@ -10,7 +12,7 @@ while true; do
     echo -e "\033[0m"
     
     # Запускаем саму игру
-    bash pacman.sh
+    bash "$SCRIPT_DIR/pacman.sh"
     
     echo ""
     echo "════════════════════════════════"
@@ -30,3 +32,4 @@ done
 echo ""
 echo -e "\033[1;36m💜 Окно можно закрыть 💜\033[0m"
 read -p "Нажми Enter чтобы выйти..."
+EOF

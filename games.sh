@@ -113,7 +113,7 @@ while true; do
             ;;
         5)
             show_loading
-            run_game "tictactoe.sh" "Крестики-нолики" "❌⭕"
+            run_game "purple_tictactoe.sh" "Крестики-нолики" "❌⭕"
             ;;
         6)
             show_loading

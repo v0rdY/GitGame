@@ -1,33 +1,45 @@
-# 🎮 Terminal Games Collection
+# 🎮 Коллекция терминальных игр / Terminal Games Collection
 
-A collection of 6 fun terminal-based games written in Bash with purple theme! 💜
+[English](#terminal-games-collection) | [Русский](#коллекция-терминальных-игр)
 
-## 🕹️ Games Included
+---
 
-1. **🐍 Snake** - Classic snake game with smooth controls
-2. **🎯 Hangman** - Word guessing game with ASCII art
-3. **🎲 Dice** - Dice rolling game with animations
-4. **🧩 Maze** - Multi-level maze adventure
-5. **❌⭕ Tic-Tac-Toe** - Play against computer or friend
-6. **👻 Pacman** - Classic Pacman with ghost AI
+## 🎮 Terminal Games Collection
 
-## 🚀 Quick Start
+A collection of 6 fun terminal-based games written in Bash with beautiful purple theme! 💜
+
+### 🕹️ Games Included
+
+1. **🐍 Snake** - Classic snake game with smooth controls and collision detection
+2. **🎯 Hangman** - Word guessing game with ASCII art and multiple difficulty levels
+3. **🎲 Dice** - Dice rolling game with beautiful animations and two-player mode
+4. **🧩 Maze** - Multi-level maze adventure with increasing difficulty
+5. **❌⭕ Tic-Tac-Toe** - Play against computer or friend with colorful interface
+6. **👻 Pacman** - Classic Pacman with ghost AI and multiple lives
+
+### 🚀 Quick Start
 
 ```bash
 # Clone the repository
-git clone https://github.com/username/games-collection.git
-cd games-collection
+git clone https://github.com/v0rdy/GitGame.git
+cd GitGame
 
-# Make all games executable
+# Run setup script (recommended)
+bash setup.sh
+
+# Or manually make files executable
 chmod +x *.sh
 
-# Run the main menu
+# Launch games using the alias
+games
+
+# Or run main menu directly
 bash games.sh
 
 # Or run individual games
 bash snake.sh
 bash pacman.sh
-# etc...
-
-
-
+bash hangman.sh
+bash dice.sh
+bash maze.sh
+bash purple_tictactoe.sh

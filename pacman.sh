@@ -93,7 +93,7 @@ pacman_game() {
             local new_x=${ghost_x[i]}
             local new_y=${ghost_y[i]}
             
-            # Случайное изменение направления (исправленная строка)
+            # Случайное изменение направления
             if [[ $((RANDOM % 5)) -eq 0 ]]; then
                 local directions=("right" "left" "up" "down")
                 ghost_direction[i]=${directions[$((RANDOM % 4))]}
@@ -117,20 +117,6 @@ pacman_game() {
                     ghost_direction[i]=${directions[$((RANDOM % 4))]}
                 fi
             fi
-            
-            # Проверка столкновения с пакманом
-            if [[ ${ghost_x[i]} -eq $pacman_x && ${ghost_y[i]} -eq $pacman_y ]]; then
-                ((lives--))
-                if [[ $lives -le 0 ]]; then
-                    game_over=1
-                else
-                    # Респавн пакмана
-                    pacman_x=1
-                    pacman_y=1
-                    echo -e "\033[1;31mПакман пойман! Осталось жизней: $lives\033[0m"
-                    sleep 1
-                fi
-            fi
         done
     }
     
@@ -139,12 +125,6 @@ pacman_game() {
     
     while [[ $game_over -eq 0 && $dots_count -gt 0 ]]; do
         draw_game
-        
-        # Проверка победы
-        if [[ $dots_count -eq 0 ]]; then
-            echo -e "\033[1;32m🎉 Поздравляю! Вы собрали все точки! 🎉\033[0m"
-            break
-        fi
         
         # Управление
         read -rsn1 -t 0.3 input
@@ -177,7 +157,7 @@ pacman_game() {
         # Движение призраков
         move_ghosts
         
-        # Быстрая проверка столкновения после движения призраков
+        # Проверка столкновения с призраками
         for ((i=0; i<4; i++)); do
             if [[ ${ghost_x[i]} -eq $pacman_x && ${ghost_y[i]} -eq $pacman_y ]]; then
                 ((lives--))

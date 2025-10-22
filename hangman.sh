@@ -153,13 +153,7 @@ hangman_game() {
         fi
         
         echo
-        read -p "Введи букву или 'quit' для выхода: " guess
-        
-        # Проверка на выход
-        if [[ "$guess" == "quit" || "$guess" == "exit" ]]; then
-            echo -e "\033[1;35mВыход из игры...\033[0m"
-            return
-        fi
+        read -p "Введи букву: " guess
         
         # Проверка ввода
         if [[ ${#guess} -ne 1 ]]; then
@@ -225,35 +219,24 @@ hangman_game() {
 }
 
 main() {
-    while true; do
-        choose_game_mode
-        read -p "Твой выбор (1-2): " mode
-        
-        case $mode in
-            1)
-                word=$(get_random_word)
-                hangman_game "$word"
-                ;;
-            2)
-                word=$(get_custom_word)
-                clear
-                hangman_game "$word"
-                ;;
-            *)
-                echo -e "\033[1;31mНеверный выбор! Попробуй ещё раз.\033[0m"
-                sleep 1
-                continue
-                ;;
-        esac
-        
-        echo
-        read -p "Хочешь сыграть ещё раз? (y/n): " play_again
-        if [[ $play_again != "y" && $play_again != "Y" ]]; then
-            echo -e "\033[1;35mСпасибо за игру! 💜\033[0m"
-            break
-        fi
-        clear
-    done
+    choose_game_mode
+    read -p "Твой выбор (1-2): " mode
+    
+    case $mode in
+        1)
+            word=$(get_random_word)
+            hangman_game "$word"
+            ;;
+        2)
+            word=$(get_custom_word)
+            clear
+            hangman_game "$word"
+            ;;
+        *)
+            echo -e "\033[1;31mНеверный выбор! Попробуй ещё раз.\033[0m"
+            sleep 1
+            ;;
+    esac
 }
 
 # Запуск игры

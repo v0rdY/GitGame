@@ -25,11 +25,7 @@ while true; do
         echo "   ║         💜 💜 💜        ║"
         echo "   ╚══════════════════════════╝"
         echo -e "\033[0m"
-        break
+        sleep 1
+        exit 0
     fi
 done
-
-echo ""
-echo -e "\033[1;36m💜 Окно можно закрыть 💜\033[0m"
-read -p "Нажми Enter чтобы выйти..."
-EOF

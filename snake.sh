@@ -65,11 +65,6 @@ snake_game() {
                         if [[ $x -eq $seg_x && $y -eq $seg_y ]]; then
                             echo -n "$snake_body_char"
                             cell_empty=0
-                            
-                            # Проверка столкновения головы с телом
-                            if [[ $is_head -eq 1 ]]; then
-                                game_over=1
-                            fi
                             break
                         fi
                     done

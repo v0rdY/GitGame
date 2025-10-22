@@ -29,10 +29,7 @@ while true; do
         echo "   ║         💜 💜 💜        ║"
         echo "   ╚══════════════════════════╝"
         echo -e "\033[0m"
-        break
+        sleep 1
+        exit 0
     fi
 done
-
-echo ""
-echo -e "\033[1;36m💜 Нажми Ctrl+C чтобы выйти 💜\033[0m"
-EOF

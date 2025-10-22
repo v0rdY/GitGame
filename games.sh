@@ -29,24 +29,24 @@ print_banner() {
     echo
 }
 
-# Функция для запуска игры в Windows
+# Функция для запуска игры в Windows системном терминале
 run_game_windows() {
     local run_script="$1"
     local game_name="$2"
     
-    echo -e "${CYAN}🐀 Запускаем $game_name в новом окне Git Bash...${RESET}"
+    echo -e "${CYAN}🐀 Запускаем $game_name в системном терминале Windows...${RESET}"
     
-    # Запускаем в новом окне Git Bash
-    if command -v mintty &> /dev/null; then
-        # Используем mintty для нового окна Git Bash
-        mintty -t "$game_name" -h always -e bash -c "cd '$SCRIPT_DIR' && ./'$run_script'; echo 'Нажмите любую клавишу для выхода...'; read -n1" &
+    # Запускаем в новом окне Windows Terminal или Command Prompt
+    if command -v wt &> /dev/null; then
+        # Используем Windows Terminal если доступен
+        wt bash -c "cd '$SCRIPT_DIR' && ./'$run_script'"
     else
-        # Альтернативный способ для Git Bash
-        start "Bash Game: $game_name" bash -c "cd '$SCRIPT_DIR' && ./'$run_script'; echo 'Нажмите любую клавишу для выхода...'; read -n1"
+        # Используем стандартный Command Prompt
+        cmd //c start "Bash Game: $game_name" bash -c "cd '$SCRIPT_DIR' && ./'$run_script'"
     fi
 }
 
-# Главная функция запуска игры
+# Функция для определения ОС и запуска игры
 run_game() {
     local run_script="$1"
     local game_name="$2"
@@ -54,13 +54,39 @@ run_game() {
     
     echo -e "${LIGHT_PURPLE}🎮 Запускаем $emoji $game_name...${RESET}"
     
+    # Проверяем существование скрипта игры
     if [[ ! -f "$SCRIPT_DIR/$run_script" ]]; then
         echo -e "${PURPLE}❌ Скрипт запуска $run_script не найден!${RESET}"
+        echo -e "${PURPLE}📁 Убедитесь что файл существует в директории: $SCRIPT_DIR/${RESET}"
         return 1
     fi
     
+    # Даем права на выполнение
     chmod +x "$SCRIPT_DIR/$run_script" 2>/dev/null
-    run_game_windows "$run_script" "$game_name"
+    
+    # Проверяем успешность chmod
+    if [[ ! -x "$SCRIPT_DIR/$run_script" ]]; then
+        echo -e "${PURPLE}❌ Не удалось сделать скрипт исполняемым!${RESET}"
+        return 1
+    fi
+    
+    # Определяем ОС и запускаем соответствующим способом
+    case "$OSTYPE" in
+        linux-gnu*|darwin*)
+            # Linux или macOS - запускаем в текущем терминале
+            echo -e "${CYAN}🐧 Запускаем $game_name...${RESET}"
+            cd "$SCRIPT_DIR" && ./"$run_script"
+            ;;
+        msys*|cygwin*)
+            # Windows (Git Bash) - запускаем в системном терминале Windows
+            run_game_windows "$run_script" "$game_name"
+            ;;
+        *)
+            # Неизвестная ОС - пытаемся запустить напрямую
+            echo -e "${PURPLE}⚠️  Неизвестная ОС, пытаемся запустить напрямую...${RESET}"
+            cd "$SCRIPT_DIR" && ./"$run_script"
+            ;;
+    esac
 }
 
 # Анимация загрузки
@@ -76,65 +102,94 @@ show_loading() {
     echo -e "\r✅ Готово!          "
 }
 
-# Главное меню
-while true; do
-    print_banner
-    
-    echo -e "${LIGHT_PURPLE}🎯 Выбери игру:${RESET}"
-    echo
-    echo -e "  ${PURPLE}1${RESET} – ${CYAN}Змейка${RESET} ${PURPLE}🐍${RESET}"
-    echo -e "  ${PURPLE}2${RESET} – ${CYAN}Виселица${RESET} ${PURPLE}🎭${RESET}" 
-    echo -e "  ${PURPLE}3${RESET} – ${CYAN}Кости${RESET} ${PURPLE}🎲${RESET}"
-    echo -e "  ${PURPLE}4${RESET} – ${CYAN}Лабиринт${RESET} ${PURPLE}🏰${RESET}"
-    echo -e "  ${PURPLE}5${RESET} – ${CYAN}Крестики-нолики${RESET} ${PURPLE}❌⭕${RESET}"
-    echo -e "  ${PURPLE}6${RESET} – ${CYAN}Пакман${RESET} ${PURPLE}👻${RESET}"
-    echo -e "  ${PURPLE}7${RESET} – ${CYAN}Выход${RESET} ${PURPLE}🚪${RESET}"
-    echo
-    echo -e "${DARK_PURPLE}═════════════════════════════════════════${RESET}"
-    echo -ne "${BOLD}${LIGHT_PURPLE}🎮 Твой выбор (1–7): ${RESET}"
-    read choice
+# Проверяем зависимости
+check_dependencies() {
+    local deps=("bash" "clear")
+    for dep in "${deps[@]}"; do
+        if ! command -v "$dep" &> /dev/null; then
+            echo -e "${PURPLE}❌ Ошибка: $dep не найден!${RESET}"
+            return 1
+        fi
+    done
+    return 0
+}
 
-    case $choice in
-        1)
-            show_loading
-            run_game "run_snake.sh" "Змейка" "🐍"
-            ;;
-        2)
-            show_loading
-            run_game "run_hangman.sh" "Виселица" "🎭"
-            ;;
-        3)
-            show_loading
-            run_game "run_dice.sh" "Кости" "🎲"
-            ;;
-        4)
-            show_loading
-            run_game "run_maze.sh" "Лабиринт" "🏰"
-            ;;
-        5)
-            show_loading
-            run_game "run_tictactoe.sh" "Крестики-нолики" "❌⭕"
-            ;;
-        6)
-            show_loading
-            run_game "run_pacman.sh" "Пакман" "👻"
-            ;;
-        7)
-            echo
-            echo -e "${LIGHT_PURPLE}👋 До встречи! Спасибо за игру! 🎮${RESET}"
-            echo -e "${PURPLE}✨ ФИОЛЕТОВЫЕ ИГРЫ BASH ✨${RESET}"
-            sleep 1
-            exit 0
-            ;;
-        *)
-            echo
-            echo -e "${PURPLE}❌ Неверный выбор! Попробуй снова.${RESET}"
-            sleep 2
-            ;;
-    esac
+# Главное меню
+main_menu() {
+    while true; do
+        print_banner
+        
+        echo -e "${LIGHT_PURPLE}🎯 Выбери игру:${RESET}"
+        echo
+        echo -e "  ${PURPLE}1${RESET} – ${CYAN}Змейка${RESET} ${PURPLE}🐍${RESET}"
+        echo -e "  ${PURPLE}2${RESET} – ${CYAN}Виселица${RESET} ${PURPLE}🎭${RESET}" 
+        echo -e "  ${PURPLE}3${RESET} – ${CYAN}Кости${RESET} ${PURPLE}🎲${RESET}"
+        echo -e "  ${PURPLE}4${RESET} – ${CYAN}Лабиринт${RESET} ${PURPLE}🏰${RESET}"
+        echo -e "  ${PURPLE}5${RESET} – ${CYAN}Крестики-нолики${RESET} ${PURPLE}❌⭕${RESET}"
+        echo -e "  ${PURPLE}6${RESET} – ${CYAN}Пакман${RESET} ${PURPLE}👻${RESET}"
+        echo -e "  ${PURPLE}7${RESET} – ${CYAN}Выход${RESET} ${PURPLE}🚪${RESET}"
+        echo
+        echo -e "${DARK_PURPLE}═════════════════════════════════════════${RESET}"
+        echo -ne "${BOLD}${LIGHT_PURPLE}🎮 Твой выбор (1–7): ${RESET}"
+        read -r choice
+
+        case $choice in
+            1)
+                show_loading
+                run_game "run_snake.sh" "Змейка" "🐍"
+                ;;
+            2)
+                show_loading
+                run_game "run_hangman.sh" "Виселица" "🎭"
+                ;;
+            3)
+                show_loading
+                run_game "run_dice.sh" "Кости" "🎲"
+                ;;
+            4)
+                show_loading
+                run_game "run_maze.sh" "Лабиринт" "🏰"
+                ;;
+            5)
+                show_loading
+                run_game "run_tictactoe.sh" "Крестики-нолики" "❌⭕"
+                ;;
+            6)
+                show_loading
+                run_game "run_pacman.sh" "Пакман" "👻"
+                ;;
+            7)
+                echo
+                echo -e "${LIGHT_PURPLE}👋 До встречи! Спасибо за игру! 🎮${RESET}"
+                echo -e "${PURPLE}✨ ФИОЛЕТОВЫЕ ИГРЫ BASH ✨${RESET}"
+                sleep 2
+                exit 0
+                ;;
+            *)
+                echo
+                echo -e "${PURPLE}❌ Неверный выбор! Введите число от 1 до 7.${RESET}"
+                sleep 2
+                ;;
+        esac
+        
+        echo
+        echo -e "${DARK_PURPLE}═════════════════════════════════════════${RESET}"
+        echo -ne "${PURPLE}Нажми Enter чтобы продолжить...${RESET}"
+        read -r
+    done
+}
+
+# Основная программа
+main() {
+    # Проверяем зависимости
+    if ! check_dependencies; then
+        echo -e "${PURPLE}❌ Необходимые зависимости отсутствуют!${RESET}"
+        exit 1
+    fi
     
-    echo
-    echo -e "${DARK_PURPLE}═════════════════════════════════════════${RESET}"
-    echo -ne "${PURPLE}Нажми Enter чтобы продолжить...${RESET}"
-    read -r
-done
+    # Запускаем главное меню
+    main_menu
+}
+
+# Запускаем основную программу
+main
